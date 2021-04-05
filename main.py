@@ -60,9 +60,12 @@ def WatchPictureOnFbi(path):
 ###################
 # 程序主事件
 ###################
-if sys.argv[1] == "--version": # 读取参数
-    print("Spark Store For Console(Python): 1.0")
-    quit()
+try:
+	if sys.argv[1] == "--version": # 读取参数
+	    print("Spark Store For Console(Python): 1.0")
+	    quit()
+except:
+	pass
 if not os.path.exists("/tmp/spark-store-console"):
     os.mkdir("/tmp/spark-store-console")
 while True:
