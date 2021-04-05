@@ -17,7 +17,7 @@ import subprocess
 # 程序所需变量（可以修改）
 #########################
 aptSource = "http://dcstore.spark-app.store"
-programSort = {1: "chat", 3: "development", 4: "games", 5: "image_graphics", 6: "music", 7: "netword", 8: "office", 9: "others", 10: "reading", 11: "themes", 12: "tools", 2: "video", 13: "Exit"}
+programSort = {1: "chat", 3: "development", 4: "games", 5: "image_graphics", 6: "music", 7: "network", 8: "office", 9: "others", 10: "reading", 11: "themes", 12: "tools", 2: "video", 13: "Exit"}
 debInstall = {1: "apt", 2: "apt-get", 3: "apt-fast"}
 rootRun = {1: "sudo", 2: "pkexec"}
 download = {1: "wget", 2: "curl", 3: "aria2c"}
