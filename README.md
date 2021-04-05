@@ -26,7 +26,13 @@ sudo apt install python3 wget
 git clone https://gitee.com/gfdgd-xi/spark-store-console.git
 ```
 
-3.  运行本程序
+3.  添加星火应用商店的源（如果已经安装星火应用商店或添加了星火应用商店的源请忽略）
+
+```
+sudo cp spark-store-console/sparkstore.list /etc/apt/sources.list.d/  # 需要 root 权限
+```
+
+4.  运行本程序
 
 ```
 cd spark-store-console
