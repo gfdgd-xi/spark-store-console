@@ -29,6 +29,8 @@ git clone https://gitee.com/gfdgd-xi/spark-store-console.git
 3.  添加星火应用商店的源（如果已经安装星火应用商店或添加了星火应用商店的源请忽略）
 
 ```
+wget http://sucdn.jerrywang.top/dcs-repo.gpg-key.asc
+apt-key add dcs-repo.gpg-key.asc
 sudo cp spark-store-console/sparkstore.list /etc/apt/sources.list.d/  # 需要 root 权限
 ```
 
