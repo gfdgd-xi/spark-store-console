@@ -30,8 +30,9 @@ git clone https://gitee.com/gfdgd-xi/spark-store-console.git
 
 ```
 wget http://sucdn.jerrywang.top/dcs-repo.gpg-key.asc
-apt-key add dcs-repo.gpg-key.asc
+sudo apt-key add dcs-repo.gpg-key.asc  # 需要 root 权限
 sudo cp spark-store-console/sparkstore.list /etc/apt/sources.list.d/  # 需要 root 权限
+sudo apt update  # 需要 root 权限
 ```
 
 4.  运行本程序
