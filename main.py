@@ -10,6 +10,7 @@
 import os
 import sys
 import json
+import random
 import shutil
 import subprocess
 
@@ -60,14 +61,15 @@ def WatchPictureOnFbi(path):
 ###################
 # 程序主事件
 ###################
+stringtemp = random.randint(0, 9999)
 try:
 	if sys.argv[1] == "--version": # 读取参数
 	    print("Spark Store For Console(Python): 1.0")
 	    quit()
 except:
 	pass
-if not os.path.exists("/tmp/spark-store-console"):
-    os.mkdir("/tmp/spark-store-console")
+if not os.path.exists("/tmp/spark-store-console-{}".format(stringtemp)):
+    os.mkdir("/tmp/spark-store-console-{}".format(stringtemp))
 while True:
     # 选择分类
     ClearConsole()
@@ -79,20 +81,20 @@ while True:
         quit()
     # 选择应用
     ClearConsole()
-    if os.path.exists("/tmp/spark-store-console/applist.json"):
-        os.remove("/tmp/spark-store-console/applist.json")
-    DownloadFile("{}/store/{}/applist.json".format(aptSource, programSort[int(choose)]), "/tmp/spark-store-console")
-    jsonFile = open("/tmp/spark-store-console/applist.json")
+    if os.path.exists("/tmp/spark-store-console-{}/applist.json".format(stringtemp)):
+        os.remove("/tmp/spark-store-console-{}/applist.json".format(stringtemp))
+    DownloadFile("{}/store/{}/applist.json".format(aptSource, programSort[int(choose)]), "/tmp/spark-store-console-{}".format(stringtemp))
+    jsonFile = open("/tmp/spark-store-console-{}/applist.json".format(stringtemp))
     jsonThings = json.load(jsonFile)
     #print(jsonThings[0]['Name'])
     print("Choose Program To Install:")
     for i in range(0, len(jsonThings), 1):
         print("{}.{}".format(str(i + 1), jsonThings[i]['Name']))
     chooseProgram = input(">")
-    if os.path.exists("/tmp/spark-store-console/app.json"):
-        os.remove("/tmp/spark-store-console/app.json")
-    DownloadFile("{}/store/{}/{}/app.json".format(aptSource, programSort[int(choose)], jsonThings[int(chooseProgram) - 1]['Pkgname']), "/tmp/spark-store-console")
-    jsonFile = open("/tmp/spark-store-console/app.json")
+    if os.path.exists("/tmp/spark-store-console-{}/app.json".format(stringtemp)):
+        os.remove("/tmp/spark-store-console-{}/app.json".format(stringtemp))
+    DownloadFile("{}/store/{}/{}/app.json".format(aptSource, programSort[int(choose)], jsonThings[int(chooseProgram) - 1]['Pkgname']), "/tmp/spark-store-console-{}".format(stringtemp))
+    jsonFile = open("/tmp/spark-store-console-{}/app.json".format(stringtemp))
     jsonThings = json.load(jsonFile)
     while True:
         # 应用操作
@@ -115,18 +117,18 @@ while True:
             InstallDeb(jsonThings['Pkgname'])
             break
         if installChoose == "picture":
-            if os.path.exists("/tmp/spark-store-console/picture"):
-                shutil.rmtree("/tmp/spark-store-console/picture")
-            os.mkdir("/tmp/spark-store-console/picture")
+            if os.path.exists("/tmp/spark-store-console-{}/picture".format(stringtemp)):
+                shutil.rmtree("/tmp/spark-store-console-{}/picture".format(stringtemp))
+            os.mkdir("/tmp/spark-store-console-{}/picture".format(stringtemp))
             for i in range(1, 5, 1):
-                DownloadFile("{}/store/{}/{}/screen_{}.png".format(aptSource, programSort[int(choose)], jsonThings['Pkgname'], str(i)), "/tmp/spark-store-console/picture")
-            WatchPicture("/tmp/spark-store-console/picture/screen_1.png")
+                DownloadFile("{}/store/{}/{}/screen_{}.png".format(aptSource, programSort[int(choose)], jsonThings['Pkgname'], str(i)), "/tmp/spark-store-console-{}/picture".format(stringtemp))
+            WatchPicture("/tmp/spark-store-console-{}/picture/screen_1.png".format(stringtemp))
         if installChoose == "fbi":
-            if os.path.exists("/tmp/spark-store-console/picture"):
-                shutil.rmtree("/tmp/spark-store-console/picture")
-            os.mkdir("/tmp/spark-store-console/picture")
+            if os.path.exists("/tmp/spark-store-console-{}/picture".format(stringtemp)):
+                shutil.rmtree("/tmp/spark-store-console-{}/picture".format(stringtemp))
+            os.mkdir("/tmp/spark-store-console-{}/picture".format(stringtemp))
             for i in range(1, 5, 1):
-                DownloadFile("{}/store/{}/{}/screen_{}.png".format(aptSource, programSort[int(choose)], jsonThings['Pkgname'], str(i)), "/tmp/spark-store-console/picture")
-            WatchPictureOnFbi("/tmp/spark-store-console/picture/*")
+                DownloadFile("{}/store/{}/{}/screen_{}.png".format(aptSource, programSort[int(choose)], jsonThings['Pkgname'], str(i)), "/tmp/spark-store-console-{}/picture".format(stringtemp))
+            WatchPictureOnFbi("/tmp/spark-store-console-{}/picture/*".format(stringtemp))
         if installChoose == "break":
             break
