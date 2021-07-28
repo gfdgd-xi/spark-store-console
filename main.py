@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 ###################################################################################################
 # 作者：gfdgd xi
-# 版本：1.1
+# 版本：1.2.0
 # 感谢：感谢 Spark Store（星火应用商店） 团队，提供了 Spark Store（星火应用商店） 给大家使用，让我能做这个程序
 ###################################################################################################
 #################
@@ -15,11 +15,26 @@ import shutil
 import subprocess
 
 #########################
+# 程序信息
+#########################
+version = "1.2.0"
+codeUrl = ["https://gitee.com/gfdgd-xi/spark-store-console"]
+stringtemp = random.randint(0, 9999)  # 产生随机数
+updateThings = '''1.2.0更新内容：
+*1、语言修改为中文;
+*2、支持搜索功能;
+*3、功能优化;
+*4、增加更新模块;
+5、添加更多命令选项;
+6、更新了程序安装脚本（在 gitee 和 github 上）'''
+
+#########################
 # 程序所需变量（可以修改）
 #########################
 #aptSource = "http://dcstore.spark-app.store"
 aptSource = "http://d.store.deepinos.org.cn"
-programSort = {1: "chat", 3: "development", 4: "games", 5: "image_graphics", 6: "music", 7: "network", 8: "office", 9: "others", 10: "reading", 11: "themes", 12: "tools", 2: "video", 13: "Exit", 14: "Open Spark Store Share Url"}
+programChineseName = ["社交沟通", "编程开发", "游戏娱乐", "图形图像", "音乐欣赏", "网络应用", "办公学习", "其他应用", "阅读翻译", "主题美化", "系统工具", "视频播放", "退出程序", "打开星火应用商店分享链接"]
+programSort = ["chat", "development", "games", "image_graphics", "music", "network", "office", "others", "reading", "themes", "tools", "video", "非分类项", "非分类项"]
 debInstall = {1: "apt", 2: "apt-get", 3: "apt-fast"}
 rootRun = {1: "sudo", 2: "pkexec"}
 download = {1: "wget", 2: "curl", 3: "aria2c"}
@@ -48,7 +63,7 @@ def InstallDeb(packageName):
     # 2、使用 apt-get
     # 3、使用 apt-fast
     # 4、直接解压 deb 包到 / 并运行指定脚本（可以使一些软件包可以不用 root 权限安装）
-    os.system("{} {} install {}".format(rootRun[2], debInstall[1], packageName))
+    os.system("{} {} install {}".format(rootRun[1], debInstall[1], packageName))
 
 
 # 清屏（终端/TTY）
@@ -79,25 +94,29 @@ def Find(things, str):
     # 返回
 
 def ShowProgramInfomation(jsonThings):
+    ClearConsole()
+    print("标题：{}".format(jsonThings['Name']))
+    print("版本：{}".format(jsonThings['Version']))
+    print("包名：{}".format(jsonThings['Pkgname']))
+    print("作者：{}".format(jsonThings['Author']))
+    print("投稿者:{}".format(jsonThings['Contributor']))
+    print("官网：{}".format(jsonThings['Website']))
+    print("大小：{}".format(jsonThings['Size']))
+    print("更新时间：{}".format(jsonThings['Update']))
+    print("介绍：")
+    print(jsonThings['More'].replace("\\n", "\n"))
+    print()
+    print("如果想要安装程序，请输入“install”")
+    print("如果想要使用默认的看图工具查看程序的有关截图，请输入“picture”")
+    print("如果想要在 TTY 查看程序有关截图，请输入“fbi”")
+    print("如果你不想安装该程序，请输入“break”")
+    print("如果你想要退出程序，请输入“stop”")
     while True:
         # 应用操作
-        ClearConsole()
-        print("Program Title:{}".format(jsonThings['Name']))
-        print("Program Version:{}".format(jsonThings['Version']))
-        print("Program Package Name:{}".format(jsonThings['Pkgname']))
-        print("Program Author:{}".format(jsonThings['Author']))
-        print("Program Contributor:{}".format(jsonThings['Contributor']))
-        print("Program Website:{}".format(jsonThings['Website']))
-        print("Program Size:{}".format(jsonThings['Size']))
-        print("Program Update time:{}".format(jsonThings['Update']))
-        print("More About Program:{}".format(jsonThings['More']))
-        print("If you want to install this Program, please input 'install' to install")
-        print("If you want to watch this program picture, please input 'picture' to watch with default program")
-        print("If you want to watch this program picture on TTY, please input 'fbi' to watch with fbi")
-        print("If you don't want to install this program, please input 'break'")
-        installChoose = input(">")
+        installChoose = input(">").lower()
         if installChoose == "install":
             InstallDeb(jsonThings['Pkgname'])
+            input("按回车键继续……")
             break
         if installChoose == "picture":
             if os.path.exists("/tmp/spark-store-console-{}/picture".format(stringtemp)):
@@ -105,7 +124,7 @@ def ShowProgramInfomation(jsonThings):
             os.mkdir("/tmp/spark-store-console-{}/picture".format(stringtemp))
             for i in range(1, 5, 1):
                 DownloadFile(
-                    "{}/store/{}/{}/screen_{}.png".format(aptSource, programSort[int(choose)], jsonThings['Pkgname'],
+                    "{}/store/{}/{}/screen_{}.png".format(aptSource, programSort[int(choose) - 1], jsonThings['Pkgname'],
                                                           str(i)),
                     "/tmp/spark-store-console-{}/picture".format(stringtemp))
             WatchPicture("/tmp/spark-store-console-{}/picture/screen_1.png".format(stringtemp))
@@ -115,12 +134,14 @@ def ShowProgramInfomation(jsonThings):
             os.mkdir("/tmp/spark-store-console-{}/picture".format(stringtemp))
             for i in range(1, 5, 1):
                 DownloadFile(
-                    "{}/store/{}/{}/screen_{}.png".format(aptSource, programSort[int(choose)], jsonThings['Pkgname'],
+                    "{}/store/{}/{}/screen_{}.png".format(aptSource, programSort[int(choose) - 1], jsonThings['Pkgname'],
                                                           str(i)),
                     "/tmp/spark-store-console-{}/picture".format(stringtemp))
             WatchPictureOnFbi("/tmp/spark-store-console-{}/picture/*".format(stringtemp))
         if installChoose == "break":
             break
+        if installChoose == "stop":
+            quit()
 
 def OpenShareUrl(url):
     url = url.replace("spk://store/", "")
@@ -133,27 +154,47 @@ def OpenShareUrl(url):
     jsonThings = json.load(jsonFile)
     ShowProgramInfomation(jsonThings)
 
+def ClasslySearchProgram(classly, things):
+    global aptSource
+    global stringtemp
+    if os.path.exists("/tmp/spark-store-console-{}/applist.json".format(stringtemp)):
+        os.remove("/tmp/spark-store-console-{}/applist.json".format(stringtemp))
+    DownloadFile("{}/store/{}/applist.json".format(aptSource, classly), "/tmp/spark-store-console-{}".format(stringtemp))
+    jsonFile = open("/tmp/spark-store-console-{}/applist.json".format(stringtemp))
+    jsonThings = json.load(jsonFile)
+    rightThingsList = []
+    rightThingsIndex = []
+    for i in range(0, len(jsonThings) - 1):
+        if things.lower() in jsonThings[i]['Name'].lower():
+            rightThingsList.append(jsonThings[i]['Name'])
+            rightThingsIndex.append(i + 1)
+    return [rightThingsIndex, rightThingsList]
+
 ###################
 # 程序主事件
 ###################
-stringtemp = random.randint(0, 9999)
-#if len(sys.argv) > 1:
 if True:
     if Find(sys.argv, "--help") > 0:  # 读取参数
-        print("Spark Store For Console(Python)'s Help:")
-        print("--help\tShow Program Help")
-        print("--version\tShow Program Version")
-        print("--open-share-url \"Spark Store Share Url\"\tOpen Spark Store Share Url")
-        print("--install-must-package\tInstall Program Must Package(need run for root!)")
-        print("-q\tDon't Choose Program Sort and Exit")
-        print("\t\"--help\", \"--version\" isn't using this parameter")
+        print("星火应用商店（终端版）帮助：")
+        print("--help\t显示帮助")
+        print("--version\t显示版本")
+        print("--update-things\t显示更新内容")
+        print("--update\t更新程序")
+        print("--open-share-url \"星火应用商店分享链接\"\t打开星火应用商店分享链接")
+        print("--install-must-package\t安装本程序依赖（需要拥有 root 权限）")
+        print("-q\t不显示分类并退出")
         quit()
+    if Find(sys.argv, "--update") > 0:  # 读取参数
+        os.system("sudo {}/update-console.py".format(os.path.split(os.path.realpath(__file__))[0]))  
     if Find(sys.argv, "--version") > 0:  # 读取参数
-        print("Spark Store For Console(Python): 1.0")
-        print("Code Url: https://gitee.com/gfdgd-xi/spark-store-console")
+        print("版本：{}".format(version))
+        print("源码：{}".format(codeUrl))
+        quit()
+    if Find(sys.argv, "--update-things") > 0:
+        print(updateThings)
         quit()
     if Find(sys.argv, "--install-must-package") > 0:  # 读取参数
-        os.system("sudo ./InstallMustPackage.py")
+        os.system("sudo {}/InstallMustPackage.py".format(os.path.split(os.path.realpath(__file__))[0]))
     # 识别 Spark Store 分享链接，格式为： spk://store/分类/包名
     # 首先给 URL 删除协议
     # 然后获取“/”的位置
@@ -168,29 +209,52 @@ if not os.path.exists("/tmp/spark-store-console-{}".format(stringtemp)):
 while True:
     # 选择分类
     ClearConsole()
-    print("Choose Program Sort:")
+    print("选择应用分类（输入“exit”退出程序）：")
     for i in range(1, len(programSort) + 1, 1):
-        print("{}.{}".format(str(i), programSort[i]))
+        print("{}.{}".format(str(i), programChineseName[i - 1]))
     choose = input(">")
     if choose == "13":
         quit()
+    if choose == "stop":
+            quit()
     if choose == "14":
-        OpenShareUrl(input("Input you want to open Spark Store Share Url: "))
-    # 选择应用
-    ClearConsole()
-    if os.path.exists("/tmp/spark-store-console-{}/applist.json".format(stringtemp)):
-        os.remove("/tmp/spark-store-console-{}/applist.json".format(stringtemp))
-    DownloadFile("{}/store/{}/applist.json".format(aptSource, programSort[int(choose)]), "/tmp/spark-store-console-{}".format(stringtemp))
-    jsonFile = open("/tmp/spark-store-console-{}/applist.json".format(stringtemp))
-    jsonThings = json.load(jsonFile)
+        OpenShareUrl(input("输入星火应用商店分享链接："))
     #print(jsonThings[0]['Name'])
-    print("Choose Program To Install:")
-    for i in range(0, len(jsonThings), 1):
-        print("{}.{}".format(str(i + 1), jsonThings[i]['Name']))
-    chooseProgram = input(">")
-    if os.path.exists("/tmp/spark-store-console-{}/app.json".format(stringtemp)):
-        os.remove("/tmp/spark-store-console-{}/app.json".format(stringtemp))
-    DownloadFile("{}/store/{}/{}/app.json".format(aptSource, programSort[int(choose)], jsonThings[int(chooseProgram) - 1]['Pkgname']), "/tmp/spark-store-console-{}".format(stringtemp))
-    jsonFile = open("/tmp/spark-store-console-{}/app.json".format(stringtemp))
-    jsonThings = json.load(jsonFile)
-    ShowProgramInfomation(jsonThings)
+    while True:
+        # 选择应用
+        if os.path.exists("/tmp/spark-store-console-{}/applist.json".format(stringtemp)):
+            os.remove("/tmp/spark-store-console-{}/applist.json".format(stringtemp))
+        DownloadFile("{}/store/{}/applist.json".format(aptSource, programSort[int(choose) - 1]), "/tmp/spark-store-console-{}".format(stringtemp))
+        jsonFile = open("/tmp/spark-store-console-{}/applist.json".format(stringtemp))
+        jsonThings = json.load(jsonFile)
+        ClearConsole()
+        print("选择应用以便安装（输入“break”返回主页面，输入“exit”退出程序，输入“search”搜索）：")
+        for i in range(0, len(jsonThings), 1):
+            print("{}.{}".format(str(i + 1), jsonThings[i]['Name']))
+        chooseProgram = input(">").lower()
+        if chooseProgram == "search":
+            while True:
+                searchThings = input("请输入搜索内容：")
+                result = ClasslySearchProgram(programSort[int(choose) - 1], searchThings)
+                print("搜索结果：")
+                if len(result[0]) == 0:
+                    print("没有对应项")
+                elif len(result[0]) == 1:
+                    print("{}\t{}".format(result[0][0], result[1][0]))
+                else:
+                    for i in range(0, len(result[0]) - 1):
+                        print("{}\t{}".format(result[0][i], result[1][i]))
+                chooseProgram = input(">").lower()
+                if not chooseProgram == "search":
+                    break
+        if chooseProgram == "break":
+            break
+        if chooseProgram == "stop":
+            quit()
+        if os.path.exists("/tmp/spark-store-console-{}/app.json".format(stringtemp)):
+            os.remove("/tmp/spark-store-console-{}/app.json".format(stringtemp))
+        DownloadFile("{}/store/{}/{}/app.json".format(aptSource, programSort[int(choose) - 1], jsonThings[int(chooseProgram) - 1]['Pkgname']), "/tmp/spark-store-console-{}".format(stringtemp))
+        jsonFile = open("/tmp/spark-store-console-{}/app.json".format(stringtemp))
+        jsonThings = json.load(jsonFile)
+        ShowProgramInfomation(jsonThings)
+    

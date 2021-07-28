@@ -11,19 +11,24 @@
 import os
 import shutil
 
-print("Start")
+print("开始")
 os.system("sudo apt install wget python3")
-if input("Do you want to install choose installing Program?[Y/N]").upper() == "Y":
+if not input("是否安装其他非必须组件？[Y/N]").upper() == "N":
     os.system("sudo apt install python3-pip aria2 curl fbi")
-if input("Do you want to add Spark Store Apt source in Linux(debian)?[Y/N]").upper() == "Y":
+if not input("是否要添加星火应用商店源？[Y/N]").upper() == "N":
     if os.path.exists("/etc/apt/sources.list.d/sparkstore.list"):
-        if input("Do you want to remove old Spark Store Apt source?[Y/N]").upper() == "N":
-            print("End")
-            quit(0)
-        else:
+        print("星火应用商店源已经存在")
+        print("结束")
+        quit(0)
+    if os.path.exists("/etc/apt/sources.list.d/spark-store-console.list"):
+        if input("星火应用商店的源已经存在，是否覆盖[Y/N]").upper() == "N":
             os.remove("/etc/apt/sources.list.d/sparkstore.list")
-    os.system("sudo cp -v sparkstore.list /etc/apt/sources.list.d/sparkstore.list")
+        else:
+            print("用户已经取消")
+            print("结束")
+            quit()
+    os.system("sudo cp -v sparkstore-console.list /etc/apt/sources.list.d/sparkstore-console.list")
     os.system("wget http://sucdn.jerrywang.top/dcs-repo.gpg-key.asc -P /tmp")
     os.system("sudo apt-key add dcs-repo.gpg-key.asc")
     os.system("sudo apt update")
-print("End")
+print("结束")
