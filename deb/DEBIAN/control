@@ -1,0 +1,9 @@
+Package: spark-store-console
+Version: 1.2.0
+Maintainer: gfdgd xi <3025613752@qq.com>
+Homepage: https://gitee.com/gfdgd-xi/spark-store-console
+Architecture: all
+Priority: optional
+Depends: python3, python3-pip, fbi, wget, apt, dpkg
+Description: 一个星火应用商店的第三方客户端，为的是可以在更多发行版运行（dtk 不能运行在很多发行版上）
+
