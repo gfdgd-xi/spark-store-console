@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 ###################################################################################################
 # 作者：gfdgd xi
-# 版本：1.2.0
+# 版本：1.2.1
 # 感谢：感谢 Spark Store（星火应用商店） 团队，提供了 Spark Store（星火应用商店） 给大家使用，让我能做这个程序
 ###################################################################################################
 #################
@@ -19,29 +19,26 @@ import webbrowser
 #########################
 # 程序信息
 #########################
-version = "1.2.0"
+version = "1.2.1"
 codeUrl = ["https://gitee.com/gfdgd-xi/spark-store-console"]
 stringtemp = random.randint(0, 9999)  # 产生随机数
 uploadProgram = "https://upload.deepinos.org/"
 sparkStoreCodeUrl = "https://gitee.com/deepin-community-store/spark-store"
 sparkStoreConsoleCodeUrl = "https://gitee.com/gfdgd-xi/spark-store-console"
-updateThings = '''1.2.0更新内容：
-*1、语言修改为中文;
-*2、支持搜索功能;
-*3、功能优化;
-*4、增加更新模块;
-*5、修复了打开星火应用商店链接的问题;
-*6、修复了在输入内容时内容错误而异常退出以及大小写和最左侧和最右侧空格的忽略;
-7、添加更多命令选项;
-8、更新了程序安装脚本（在 gitee 和 github 上）'''
+updateThings = '''1.2.1更新内容：
+*1、增加了收藏功能;
+*2、支持程序重新安装/卸载;
+3、提示文字微改;
+4、添加了所谓的开发者版块;
+5、支持一键回到主页;'''
 
 #########################
 # 程序所需变量（可以修改）
 #########################
 #aptSource = "http://dcstore.spark-app.store"
 aptSource = "http://d.store.deepinos.org.cn"
-programChineseName = ["社交沟通", "编程开发", "游戏娱乐", "图形图像", "音乐欣赏", "网络应用", "办公学习", "其他应用", "阅读翻译", "主题美化", "系统工具", "视频播放", "退出程序", "打开星火应用商店分享链接", "我是开发者", "关于我们"]
-programSort = ["chat", "development", "games", "image_graphics", "music", "network", "office", "others", "reading", "themes", "tools", "video", "非分类项", "非分类项", "非分类项", "非分类项"]
+programChineseName = ["社交沟通", "编程开发", "游戏娱乐", "图形图像", "音乐欣赏", "网络应用", "办公学习", "其他应用", "阅读翻译", "主题美化", "系统工具", "视频播放", "退出程序", "打开星火应用商店分享链接", "我是开发者", "关于我们", "收藏"]
+programSort = ["chat", "development", "games", "image_graphics", "music", "network", "office", "others", "reading", "themes", "tools", "video", "非分类项", "非分类项", "非分类项", "非分类项", "非分类项"]
 debInstall = {1: "apt", 2: "apt-get", 3: "apt-fast"}
 rootRun = {1: "sudo", 2: "pkexec"}
 download = {1: "wget", 2: "curl", 3: "aria2c"}
@@ -93,8 +90,29 @@ def RemoveDeb(packageName):
     # 1、使用 apt（推荐）（默认）
     # 2、使用 apt-get
     # 3、使用 apt-fast
-    # 4、直接解压 deb 包到 / 并运行指定脚本（可以使一些软件包可以不用 root 权限安装）
     os.system("{} {} purge {}".format(rootRun[1], debInstall[1], packageName))
+
+# 更新软件源
+def UpdateAptPackage():
+    # root 的运行方案：
+    # 1、使用 sudo（推荐）（默认）
+    # 2、使用 pkexec（适用于在桌面环境使用）
+    # deb 包安装方案：
+    # 1、使用 apt（推荐）（默认）
+    # 2、使用 apt-get
+    # 3、使用 apt-fast
+    os.system("{} {} update".format(rootRun[1], debInstall[1]))
+
+# 更新操作系统
+def UpgradeSystem():
+    # root 的运行方案：
+    # 1、使用 sudo（推荐）（默认）
+    # 2、使用 pkexec（适用于在桌面环境使用）
+    # deb 包安装方案：
+    # 1、使用 apt（推荐）（默认）
+    # 2、使用 apt-get
+    # 3、使用 apt-fast
+    os.system("{} {} upgrade".format(rootRun[1], debInstall[1]))
 
 # 清屏（终端/TTY）
 def ClearConsole():
@@ -136,16 +154,18 @@ def ShowProgramInfomation(jsonThings):
     print("介绍：")
     print(jsonThings['More'].replace("\\n", "\n"))
     print()
+    print("如果你要收藏，请输入“favourite”")
     print("如果想要安装/更新程序，请输入“install”")
     print("如果想要重新安装程序，请输入“reinstall”")
     print("如果想要卸载程序，请输入“remove”")
     print("如果想要使用默认的看图工具查看程序的有关截图，请输入“picture”")
     print("如果想要在 TTY 查看程序有关截图，请输入“fbi”")
-    print("如果你不想安装该程序，请输入“break”")
-    print("如果你想要退出程序，请输入“stop”")
+    print("如果你想退出本页，请输入“break”")
+    print("如果你想回到首页，请输入“main”")
+    print("如果你想要退出程序，请输入“exit”")
     while True:
         # 应用操作
-        installChoose = input(">").lower().strip()
+        installChoose = input("安装==>").lower().strip()
         if installChoose == "install":
             InstallDeb(jsonThings['Pkgname'])
             input("按回车键继续……")
@@ -158,6 +178,8 @@ def ShowProgramInfomation(jsonThings):
             RemoveDeb(jsonThings['Pkgname'])
             input("按回车键继续……")
             break
+        if installChoose == "favourite":
+            AddFavouriteList(jsonThings)
         if installChoose == "picture":
             if os.path.exists("/tmp/spark-store-console-{}/picture".format(stringtemp)):
                 shutil.rmtree("/tmp/spark-store-console-{}/picture".format(stringtemp))
@@ -178,10 +200,13 @@ def ShowProgramInfomation(jsonThings):
                                                           str(i)),
                     "/tmp/spark-store-console-{}/picture".format(stringtemp))
             WatchPictureOnFbi("/tmp/spark-store-console-{}/picture/*".format(stringtemp))
+        if installChoose == "main":
+            return True
         if installChoose == "break":
             break
-        if installChoose == "stop":
+        if installChoose == "exit":
             quit()
+    return False
 
 def OpenShareUrl(url):
     url = url.replace("spk://store/", "")
@@ -220,6 +245,49 @@ def AboutSparkStore():
     print("如果你也想参与我们，不管是参与开发，设计，投递还是投稿作品，我们都欢迎你的加入。")
     print("QQ 群：872690351")
 
+# 获取用户主目录
+def get_home():
+    return os.path.expanduser('~')
+
+# 读取文本文档
+def read_txt(path):
+    f = open(path,"r") # 设置文件对象
+    str = f.read() # 获取内容
+    f.close() # 关闭文本对象
+    return str # 返回结果
+
+# 写入文本文档
+def write_txt(path, things):
+    file = open(path, 'w', encoding='UTF-8') # 设置文件对象
+    file.write(things) # 写入文本
+    file.close() # 关闭文本对象
+
+def AddFavouriteList(things):
+    global favouriteList
+    favouriteList.append(things)
+    write_txt("{}/.config/spark-store-console/favourite.json".format(homePath), json.dumps(favouriteList))
+
+def DelFavouriteList(thingsIndex):
+    global favouriteList
+    del favouriteList[thingsIndex]
+    write_txt("{}/.config/spark-store-console/favourite.json".format(homePath), json.dumps(favouriteList))
+
+def CleanFavouriteList():
+    global favouriteList
+    favouriteList = []
+    write_txt("{}/.config/spark-store-console/favourite.json".format(homePath), json.dumps(favouriteList))
+
+###################
+# 读取配置文件
+###################
+homePath = get_home()  # 获取用户“home”目录
+if not os.path.exists("{}/.config/spark-store-console".format(homePath)):
+    os.mkdir("{}/.config/spark-store-console".format(homePath))
+if not os.path.exists("{}/.config/spark-store-console/favourite.json".format(homePath)):
+    os.mknod("{}/.config/spark-store-console/favourite.json".format(homePath))
+    write_txt("{}/.config/spark-store-console/favourite.json".format(homePath), json.dumps([]))
+favouriteList = json.loads(read_txt("{}/.config/spark-store-console/favourite.json".format(homePath)))
+
 ###################
 # 程序主事件
 ###################
@@ -242,9 +310,6 @@ if True:
         AboutSparkStore()
         quit()
     if Find(sys.argv, "--open-upload-program-site") > 0:
-        webbrowser.open_new_tab(uploadProgram)
-        quit()
-    if Find(sys.argv, "--open-spark-store-code-url") > 0:
         webbrowser.open_new_tab(sparkStoreCodeUrl)
         quit()
     if Find(sys.argv, "--open-spark-store-console-code-url") > 0:
@@ -281,14 +346,12 @@ if not os.path.exists("/tmp/spark-store-console-{}".format(stringtemp)):
 while True:
     # 选择分类
     ClearConsole()
-    print("选择应用分类（输入“exit”退出程序）：")
+    print("选择应用分类（输入“break”/“exit”退出程序）：")
     for i in range(1, len(programSort) + 1, 1):
         print("{}.{}".format(str(i), programChineseName[i - 1]))
     while True:
         choose = input(">").lower().strip()
-        if choose == "13":
-            quit()
-        if choose == "exit":
+        if choose == "13" or choose == "exit" or choose == "break":
             quit()
         if choose == "14":
             OpenShareUrl(input("输入星火应用商店分享链接：").lower().strip())
@@ -298,19 +361,74 @@ while True:
             print("1、投稿应用")
             print("2、改进星火应用商店项目")
             print("3、改进星火应用商店控制台项目")
-            chooseDeveloper = input("开发者$>").lower().strip()
-            if chooseDeveloper == "1":
-                webbrowser.open_new_tab(uploadProgram)
-                continue
-            if chooseDeveloper == "2":
-                webbrowser.open_new_tab(sparkStoreCodeUrl)
-                continue
-            if chooseDeveloper == "3":
-                webbrowser.open_new_tab(sparkStoreConsoleCodeUrl)
-                continue
+            print("4、更新 apt 源")
+            print("5、更新操作系统")
+            print("输入”break“返回首页，输入”exit“退出程序")
+            while True:
+                chooseDeveloper = input("开发者==>").lower().strip()
+                if chooseDeveloper == "1":
+                    webbrowser.open_new_tab(uploadProgram)
+                if chooseDeveloper == "2":
+                    webbrowser.open_new_tab(sparkStoreCodeUrl)
+                if chooseDeveloper == "3":
+                    webbrowser.open_new_tab(sparkStoreConsoleCodeUrl)
+                if chooseDeveloper == "4":
+                    UpdateAptPackage()
+                if chooseDeveloper == "5":
+                    UpgradeSystem()
+                if chooseDeveloper == "break":
+                    break
+                if chooseDeveloper == "exit":
+                    quit()
+            continue
         if choose == "16":
             AboutSparkStore()
             input("按下回车键继续……")
+            continue
+        if choose == "17":
+            print("输入收藏项编号即可打开此收藏的详细信息")
+            print("输入“show”显示收藏列表")
+            print("输入“delete”删除某一项收藏")
+            print("输入“clear”清空收藏")
+            print("输入“break”返回主界面")
+            print("输入“exit”退出程序")
+            while True:
+                favouriteChoose = input("收藏=>").lower().strip()
+                if favouriteChoose == "show":
+                    number = 0
+                    for i in favouriteList:
+                        number = number + 1
+                        print("{}\t{}".format(str(number), i["Name"]))
+                    continue
+                if favouriteChoose == "delete":
+                    delNumber = input("输入要删除数字的编号：")
+                    try:
+                        if not 1 <= int(delNumber) <= len(favouriteList):
+                            print("输入错误！")
+                            continue
+                    except:
+                        print("输入错误！")
+                        continue
+                    DelFavouriteList(int(delNumber) - 1)
+                    continue
+                if favouriteChoose == "clear":
+                    if input("你确定吗？[Y/N]").upper().strip() == "Y":
+                        CleanFavouriteList()
+                        continue
+                    print("用户取消")
+                    continue
+                if favouriteChoose == "break":
+                    break
+                if favouriteChoose == "exit":
+                    quit()
+                try:
+                    if not 1 <= int(favouriteChoose) <= len(favouriteList):
+                        print("输入错误！")
+                        continue
+                except:
+                    print("输入错误！")
+                    continue
+                ShowProgramInfomation(favouriteList[int(favouriteChoose) - 1])
             continue
         try:
             if not 0 < int(choose) <= len(programSort) + 1:
@@ -368,5 +486,6 @@ while True:
         DownloadFile("{}/store/{}/{}/app.json".format(aptSource, programSort[int(choose) - 1], jsonThings[int(chooseProgram) - 1]['Pkgname']), "/tmp/spark-store-console-{}".format(stringtemp))
         jsonFile = open("/tmp/spark-store-console-{}/app.json".format(stringtemp))
         jsonThings = json.load(jsonFile)
-        ShowProgramInfomation(jsonThings)
+        if ShowProgramInfomation(jsonThings):
+            break
     
