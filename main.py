@@ -14,6 +14,7 @@ import random
 import shutil
 import traceback
 import subprocess
+import webbrowser
 
 #########################
 # 程序信息
@@ -21,6 +22,9 @@ import subprocess
 version = "1.2.0"
 codeUrl = ["https://gitee.com/gfdgd-xi/spark-store-console"]
 stringtemp = random.randint(0, 9999)  # 产生随机数
+uploadProgram = "https://upload.deepinos.org/"
+sparkStoreCodeUrl = "https://gitee.com/deepin-community-store/spark-store"
+sparkStoreConsoleCodeUrl = "https://gitee.com/gfdgd-xi/spark-store-console"
 updateThings = '''1.2.0更新内容：
 *1、语言修改为中文;
 *2、支持搜索功能;
@@ -36,8 +40,8 @@ updateThings = '''1.2.0更新内容：
 #########################
 #aptSource = "http://dcstore.spark-app.store"
 aptSource = "http://d.store.deepinos.org.cn"
-programChineseName = ["社交沟通", "编程开发", "游戏娱乐", "图形图像", "音乐欣赏", "网络应用", "办公学习", "其他应用", "阅读翻译", "主题美化", "系统工具", "视频播放", "退出程序", "打开星火应用商店分享链接"]
-programSort = ["chat", "development", "games", "image_graphics", "music", "network", "office", "others", "reading", "themes", "tools", "video", "非分类项", "非分类项"]
+programChineseName = ["社交沟通", "编程开发", "游戏娱乐", "图形图像", "音乐欣赏", "网络应用", "办公学习", "其他应用", "阅读翻译", "主题美化", "系统工具", "视频播放", "退出程序", "打开星火应用商店分享链接", "我是开发者", "关于我们"]
+programSort = ["chat", "development", "games", "image_graphics", "music", "network", "office", "others", "reading", "themes", "tools", "video", "非分类项", "非分类项", "非分类项", "非分类项"]
 debInstall = {1: "apt", 2: "apt-get", 3: "apt-fast"}
 rootRun = {1: "sudo", 2: "pkexec"}
 download = {1: "wget", 2: "curl", 3: "aria2c"}
@@ -68,6 +72,29 @@ def InstallDeb(packageName):
     # 4、直接解压 deb 包到 / 并运行指定脚本（可以使一些软件包可以不用 root 权限安装）
     os.system("{} {} install {}".format(rootRun[1], debInstall[1], packageName))
 
+# 从源重新下载安装包
+def ReinstallDeb(packageName):
+    # root 的运行方案：
+    # 1、使用 sudo（推荐）（默认）
+    # 2、使用 pkexec（适用于在桌面环境使用）
+    # deb 包安装方案：
+    # 1、使用 apt（推荐）（默认）
+    # 2、使用 apt-get
+    # 3、使用 apt-fast
+    # 4、直接解压 deb 包到 / 并运行指定脚本（可以使一些软件包可以不用 root 权限安装）
+    os.system("{} {} reinstall {}".format(rootRun[1], debInstall[1], packageName))
+
+# 从源重新下载安装包
+def RemoveDeb(packageName):
+    # root 的运行方案：
+    # 1、使用 sudo（推荐）（默认）
+    # 2、使用 pkexec（适用于在桌面环境使用）
+    # deb 包安装方案：
+    # 1、使用 apt（推荐）（默认）
+    # 2、使用 apt-get
+    # 3、使用 apt-fast
+    # 4、直接解压 deb 包到 / 并运行指定脚本（可以使一些软件包可以不用 root 权限安装）
+    os.system("{} {} purge {}".format(rootRun[1], debInstall[1], packageName))
 
 # 清屏（终端/TTY）
 def ClearConsole():
@@ -109,7 +136,9 @@ def ShowProgramInfomation(jsonThings):
     print("介绍：")
     print(jsonThings['More'].replace("\\n", "\n"))
     print()
-    print("如果想要安装程序，请输入“install”")
+    print("如果想要安装/更新程序，请输入“install”")
+    print("如果想要重新安装程序，请输入“reinstall”")
+    print("如果想要卸载程序，请输入“remove”")
     print("如果想要使用默认的看图工具查看程序的有关截图，请输入“picture”")
     print("如果想要在 TTY 查看程序有关截图，请输入“fbi”")
     print("如果你不想安装该程序，请输入“break”")
@@ -119,6 +148,14 @@ def ShowProgramInfomation(jsonThings):
         installChoose = input(">").lower().strip()
         if installChoose == "install":
             InstallDeb(jsonThings['Pkgname'])
+            input("按回车键继续……")
+            break
+        if installChoose == "reinstall":
+            ReinstallDeb(jsonThings['Pkgname'])
+            input("按回车键继续……")
+            break
+        if installChoose == "remove":
+            RemoveDeb(jsonThings['Pkgname'])
             input("按回车键继续……")
             break
         if installChoose == "picture":
@@ -174,6 +211,15 @@ def ClasslySearchProgram(classly, things):
             rightThingsIndex.append(i + 1)
     return [rightThingsIndex, rightThingsList]
 
+def AboutSparkStore():
+    print("关于我们")
+    print("我们并不是官方团队，和你一样，我们也只是众多Linux/deepin系统爱好者和用户之中的一员，我们开发并且运营这个“Spark应用商店”，是为了让社区的朋友们一起分享好用的软件，或者一起参与开发，让大家都用到最新的，最优秀的软件。")
+    print("我们并没有因此盈利，所有开发和维护人员都不会获得报酬，我们的主要支出大部分依赖于社区对我们的捐助，很感谢大家，这部分捐助让我们并不需要耗费太多精力去担心资金问题。")
+    print("我们的服务和开发的软件都是免费供给大家使用，交流，学习的，但是在您的使用过程中一定要遵守当地的法律法规，否则出现任何问题和我们无关。")
+    print("如果商店中任何一部分有侵犯您权益的行为，请告知我们<jifengshenmo@outlook.com>，我们会第一时间删除侵权内容。")
+    print("如果你也想参与我们，不管是参与开发，设计，投递还是投稿作品，我们都欢迎你的加入。")
+    print("QQ 群：872690351")
+
 ###################
 # 程序主事件
 ###################
@@ -184,9 +230,25 @@ if True:
         print("--version\t显示版本")
         print("--update-things\t显示更新内容")
         print("--update\t更新程序")
+        print("--about-our\t关于我们")
         print("--open-share-url \"星火应用商店分享链接\"\t打开星火应用商店分享链接")
         print("--install-must-package\t安装本程序依赖（需要拥有 root 权限）")
         print("-q\t不显示分类并退出")
+        print("--open-upload-program-site\t打开星火应用商店投稿页面")
+        print("--open-spark-store-code-url\t打开星火应用商店代码托管平台")
+        print("--open-spark-store-console-code-url\t打开星火应用商店终端版代码托管平台")
+        quit()
+    if Find(sys.argv, "--about-our") > 0:
+        AboutSparkStore()
+        quit()
+    if Find(sys.argv, "--open-upload-program-site") > 0:
+        webbrowser.open_new_tab(uploadProgram)
+        quit()
+    if Find(sys.argv, "--open-spark-store-code-url") > 0:
+        webbrowser.open_new_tab(sparkStoreCodeUrl)
+        quit()
+    if Find(sys.argv, "--open-spark-store-console-code-url") > 0:
+        webbrowser.open_new_tab(sparkStoreConsoleCodeUrl)
         quit()
     if Find(sys.argv, "--update") > 0:  # 读取参数
         os.system("sudo {}/update-console.py".format(os.path.split(os.path.realpath(__file__))[0]))  
@@ -230,6 +292,24 @@ while True:
             quit()
         if choose == "14":
             OpenShareUrl(input("输入星火应用商店分享链接：").lower().strip())
+            input("按下回车键继续……")
+            continue
+        if choose == "15":
+            print("1、投稿应用")
+            print("2、改进星火应用商店项目")
+            print("3、改进星火应用商店控制台项目")
+            chooseDeveloper = input("开发者$>").lower().strip()
+            if chooseDeveloper == "1":
+                webbrowser.open_new_tab(uploadProgram)
+                continue
+            if chooseDeveloper == "2":
+                webbrowser.open_new_tab(sparkStoreCodeUrl)
+                continue
+            if chooseDeveloper == "3":
+                webbrowser.open_new_tab(sparkStoreConsoleCodeUrl)
+                continue
+        if choose == "16":
+            AboutSparkStore()
             input("按下回车键继续……")
             continue
         try:
