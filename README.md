@@ -5,15 +5,19 @@
 
 ### 介绍
 一个星火应用商店的第三方客户端，为的是可以在更多发行版运行（dtk 不能运行在很多发行版上）  
+（好久没更新了，重新更新了一下）  
 当然还有其他所谓的优点：  
 1、所谓的界面简单  
 2、占用空间相比较小  
 3、介绍、包名等文字可以复制  
 4、可以把程序截图拷贝出来  
 使用 Python3 构建  
-（测试平台：deepin 20.2.2）  
+（测试平台：deepin 20.5）  
 截图：  
-![1.2.1主界面](https://storage.deepin.org/thread/202107311439305357_截图_deepin-terminal_20210731143903.png)
+![截图_deepin-terminal_20220411214135.png](https://storage.deepin.org/thread/202204112144187463_截图_deepin-terminal_20220411214135.png)
+![截图_deepin-terminal_20220411214146.png](https://storage.deepin.org/thread/202204112144237996_截图_deepin-terminal_20220411214146.png)
+![截图_deepin-terminal_20220411214200.png](https://storage.deepin.org/thread/202204112144286420_截图_deepin-terminal_20220411214200.png)
+
 
 #### 项目提示  
 有些地方需要 root，如你无法获得 root 权限则无法安装任何应用！  
@@ -22,7 +26,13 @@
 只要你能运行 python3 以及其需要的库就可以使用  
 
 #### 更新内容：  
-**1.2.1（2021/7/31）**  
+##### 1.2.2（2022/04/11）
+1. 重新打包安装包
+![截图_deepin-terminal_20220411214135.png](https://storage.deepin.org/thread/202204112144187463_截图_deepin-terminal_20220411214135.png)
+![截图_deepin-terminal_20220411214146.png](https://storage.deepin.org/thread/202204112144237996_截图_deepin-terminal_20220411214146.png)
+![截图_deepin-terminal_20220411214200.png](https://storage.deepin.org/thread/202204112144286420_截图_deepin-terminal_20220411214200.png)
+
+##### 1.2.1（2021/07/31）
 *1、增加了收藏功能;  
 *2、支持程序重新安装/卸载;  
 3、提示文字微改;  
@@ -30,7 +40,7 @@
 5、支持一键回到主页;  
 ![1.2.1主界面](https://storage.deepin.org/thread/202107311439305357_截图_deepin-terminal_20210731143903.png)
 
-**1.2.0（2021/7/28）：**  
+##### 1.2.0（2021/07/28）：  
 *1、语言修改为中文;  
 *2、支持搜索功能;  
 *3、功能优化;  

@@ -1,0 +1,8 @@
+[Desktop Entry]
+Conmment=spark store desktop file
+Exec=spark-store-console
+Icon=spark-store-console
+Name=spark store console version
+Name[zh]=星火应用商店终端版
+Terminal=true
+Type=Application

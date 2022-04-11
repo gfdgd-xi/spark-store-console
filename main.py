@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 ###################################################################################################
 # 作者：gfdgd xi
-# 版本：1.2.1
+# 版本：1.2.2
 # 感谢：感谢 Spark Store（星火应用商店） 团队，提供了 Spark Store（星火应用商店） 给大家使用，让我能做这个程序
 ###################################################################################################
 #################
@@ -19,18 +19,14 @@ import webbrowser
 #########################
 # 程序信息
 #########################
-version = "1.2.1"
+version = "1.2.2"
 codeUrl = ["https://gitee.com/gfdgd-xi/spark-store-console"]
 stringtemp = random.randint(0, 9999)  # 产生随机数
 uploadProgram = "https://upload.deepinos.org/"
 sparkStoreCodeUrl = "https://gitee.com/deepin-community-store/spark-store"
 sparkStoreConsoleCodeUrl = "https://gitee.com/gfdgd-xi/spark-store-console"
-updateThings = '''1.2.1更新内容：
-*1、增加了收藏功能;
-*2、支持程序重新安装/卸载;
-3、提示文字微改;
-4、添加了所谓的开发者版块;
-5、支持一键回到主页;'''
+updateThings = '''1.2.2更新内容：
+1、修复了deb包的问题'''
 
 #########################
 # 程序所需变量（可以修改）
@@ -118,6 +114,8 @@ def UpgradeSystem():
 def ClearConsole():
     # 调用系统命令
     os.system("clear")
+    # Windows 则为：
+    # os.system("cls")
 
 # 打开默认程序
 # 只支持 Linux，Windows 请忽略
@@ -143,6 +141,7 @@ def Find(things, str):
 
 def ShowProgramInfomation(jsonThings):
     ClearConsole()
+    os.system("toilet Information!")
     print("标题：{}".format(jsonThings['Name']))
     print("版本：{}".format(jsonThings['Version']))
     print("包名：{}".format(jsonThings['Pkgname']))
@@ -346,6 +345,7 @@ if not os.path.exists("/tmp/spark-store-console-{}".format(stringtemp)):
 while True:
     # 选择分类
     ClearConsole()
+    os.system("toilet Welcome!")
     print("选择应用分类（输入“break”/“exit”退出程序）：")
     for i in range(1, len(programSort) + 1, 1):
         print("{}.{}".format(str(i), programChineseName[i - 1]))
@@ -447,6 +447,7 @@ while True:
         jsonFile = open("/tmp/spark-store-console-{}/applist.json".format(stringtemp))
         jsonThings = json.load(jsonFile)
         ClearConsole()
+        os.system("toilet Choose!")
         print("选择应用以便安装（输入“break”返回主页面，输入“exit”退出程序，输入“search”搜索）：")
         for i in range(0, len(jsonThings), 1):
             print("{}.{}".format(str(i + 1), jsonThings[i]['Name']))

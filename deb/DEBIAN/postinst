@@ -1,3 +1,12 @@
 # !/bin/sh 
-python3 -m pip install --upgrade pillow
-python3 -m pip install --upgrade ttkthemes
+# 加载星火应用商店源
+echo "deb [by-hash=force] https://d.store.deepinos.org.cn / " > /etc/apt/sources.list.d/sparkstore.list
+mkdir /tmp/spark-store-install
+wget -O /tmp/spark-store-install/spark-store.asc https://d.store.deepinos.org.cn/dcs-repo.gpg-key.asc 
+gpg --dearmor /tmp/spark-store-install/spark-store.asc 
+cp -f /tmp/spark-store-install/spark-store.asc.gpg /etc/apt/trusted.gpg.d/spark-store.gpg
+# 更新系统源
+apt update
+# 更新图标
+update-icon-caches /usr/share/icons/hicolor || true
+update-desktop-database /usr/share/applications || true
