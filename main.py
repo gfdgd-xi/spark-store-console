@@ -12,6 +12,7 @@ import sys
 import json
 import random
 import shutil
+import requests
 import traceback
 import subprocess
 import webbrowser
@@ -32,7 +33,13 @@ updateThings = '''1.2.2更新内容：
 # 程序所需变量（可以修改）
 #########################
 #aptSource = "http://dcstore.spark-app.store"
-aptSource = "http://d.store.deepinos.org.cn"
+#aptSource = "http://d.store.deepinos.org.cn"
+# 更换为国内源
+aptSource = [
+    #"https://mirrors.sdu.edu.cn/spark-store-repository/",
+    "https://zunyun01.store.deepinos.org.cn/",
+    "http://d.store.deepinos.org.cn/"
+    ]
 programChineseName = ["社交沟通", "编程开发", "游戏娱乐", "图形图像", "音乐欣赏", "网络应用", "办公学习", "其他应用", "阅读翻译", "主题美化", "系统工具", "视频播放", "退出程序", "打开星火应用商店分享链接", "我是开发者", "关于我们", "收藏"]
 programSort = ["chat", "development", "games", "image_graphics", "music", "network", "office", "others", "reading", "themes", "tools", "video", "非分类项", "非分类项", "非分类项", "非分类项", "非分类项"]
 debInstall = {1: "apt", 2: "apt-get", 3: "apt-fast"}
@@ -139,7 +146,9 @@ def Find(things, str):
     return -1
     # 返回
 
-def ShowProgramInfomation(jsonThings):
+def ShowProgramInfomation(jsonThings, url):
+    # 获取下载量
+    downloadTime = requests.get(f"{url}/../download-times.txt").text.replace("\n", "")
     ClearConsole()
     os.system("toilet Information!")
     print("标题：{}".format(jsonThings['Name']))
@@ -149,6 +158,7 @@ def ShowProgramInfomation(jsonThings):
     print("投稿者:{}".format(jsonThings['Contributor']))
     print("官网：{}".format(jsonThings['Website']))
     print("大小：{}".format(jsonThings['Size']))
+    print(f"下载量：{downloadTime}")
     print("更新时间：{}".format(jsonThings['Update']))
     print("介绍：")
     print(jsonThings['More'].replace("\\n", "\n"))
@@ -342,6 +352,15 @@ if True:
         quit(0)
 if not os.path.exists("/tmp/spark-store-console-{}".format(stringtemp)):
     os.mkdir("/tmp/spark-store-console-{}".format(stringtemp))
+print("选择最优源ing……")
+for i in aptSource:
+    try:
+        requests.get(i, timeout=0.5)
+        aptSource = i
+        print(f"最优源：{aptSource}")
+        break
+    except:
+        continue
 while True:
     # 选择分类
     ClearConsole()
@@ -443,9 +462,10 @@ while True:
         # 选择应用
         if os.path.exists("/tmp/spark-store-console-{}/applist.json".format(stringtemp)):
             os.remove("/tmp/spark-store-console-{}/applist.json".format(stringtemp))
-        DownloadFile("{}/store/{}/applist.json".format(aptSource, programSort[int(choose) - 1]), "/tmp/spark-store-console-{}".format(stringtemp))
-        jsonFile = open("/tmp/spark-store-console-{}/applist.json".format(stringtemp))
-        jsonThings = json.load(jsonFile)
+        #DownloadFile("{}/store/{}/applist.json".format(aptSource, programSort[int(choose) - 1]), "/tmp/spark-store-console-{}".format(stringtemp))
+        #jsonFile = open("/tmp/spark-store-console-{}/applist.json".format(stringtemp))
+        #jsonThings = json.load(jsonFile)
+        jsonThings = requests.get("{}/store/{}/applist.json".format(aptSource, programSort[int(choose) - 1])).json()
         ClearConsole()
         os.system("toilet Choose!")
         print("选择应用以便安装（输入“break”返回主页面，输入“exit”退出程序，输入“search”搜索）：")
@@ -484,9 +504,10 @@ while True:
             break
         if os.path.exists("/tmp/spark-store-console-{}/app.json".format(stringtemp)):
             os.remove("/tmp/spark-store-console-{}/app.json".format(stringtemp))
-        DownloadFile("{}/store/{}/{}/app.json".format(aptSource, programSort[int(choose) - 1], jsonThings[int(chooseProgram) - 1]['Pkgname']), "/tmp/spark-store-console-{}".format(stringtemp))
-        jsonFile = open("/tmp/spark-store-console-{}/app.json".format(stringtemp))
-        jsonThings = json.load(jsonFile)
-        if ShowProgramInfomation(jsonThings):
+        #DownloadFile("{}/store/{}/{}/app.json".format(aptSource, programSort[int(choose) - 1], jsonThings[int(chooseProgram) - 1]['Pkgname']), "/tmp/spark-store-console-{}".format(stringtemp))
+        #jsonFile = open("/tmp/spark-store-console-{}/app.json".format(stringtemp))
+        url = "{}/store/{}/{}/app.json".format(aptSource, programSort[int(choose) - 1], jsonThings[int(chooseProgram) - 1]['Pkgname'])
+        jsonThings = requests.get(url).json() #json.load(jsonFile)
+        if ShowProgramInfomation(jsonThings, url):
             break
     
