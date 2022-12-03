@@ -74,7 +74,7 @@ def InstallDeb(url):
     os.system(f"sudo bash '{programPath}/install.sh' '{aptSource}' '{url}'")
 
 # 从源重新下载安装包
-def ReinstallDeb(packageName):
+def ReinstallDeb(url):
     # root 的运行方案：
     # 1、使用 sudo（推荐）（默认）
     # 2、使用 pkexec（适用于在桌面环境使用）
@@ -83,7 +83,7 @@ def ReinstallDeb(packageName):
     # 2、使用 apt-get
     # 3、使用 apt-fast
     # 4、直接解压 deb 包到 / 并运行指定脚本（可以使一些软件包可以不用 root 权限安装）
-    os.system("{} {} reinstall {}".format(rootRun[1], debInstall[1], packageName))
+    os.system(f"sudo bash '{programPath}/install.sh' '{aptSource}' '{url}'")
 
 # 从源重新下载安装包
 def RemoveDeb(packageName):
@@ -181,7 +181,7 @@ def ShowProgramInfomation(jsonThings, url):
             input("按回车键继续……")
             break
         if installChoose == "reinstall":
-            ReinstallDeb(jsonThings['Pkgname'])
+            ReinstallDeb(f"{url}/../{jsonThings['Filename']}")
             input("按回车键继续……")
             break
         if installChoose == "remove":
@@ -219,16 +219,19 @@ def ShowProgramInfomation(jsonThings, url):
     return False
 
 def OpenShareUrl(url):
-    url = url.replace("spk://store/", "")
-    pie = url.index("/")
-    packageName = url[pie + 1: len(url)]
+    url = url.replace("spk://", aptSource)
+    #pie = url.index("/")
+    #packageName = url[pie + 1: len(url)]
+    jsonThings = requests.get(f"{url}/app.json").json()
+    ShowProgramInfomation(jsonThings, url)
+    #path = f"{url}/{fileName}"
     '''
     DownloadFile("{}/store/{}/{}/app.json".format(aptSource, fenLei, packageName),
                  "/tmp/spark-store-console-{}".format(stringtemp))
     jsonFile = open("/tmp/spark-store-console-{}/app.json".format(stringtemp))
     jsonThings = json.load(jsonFile)
     ShowProgramInfomation(jsonThings)'''
-    InstallDeb(packageName)
+    #InstallDeb(path)
 
 def ClasslySearchProgram(classly, things):
     global aptSource
@@ -376,7 +379,7 @@ while True:
             quit()
         if choose == "14":
             OpenShareUrl(input("输入星火应用商店分享链接：").lower().strip())
-            input("按下回车键继续……")
+            #input("按下回车键继续……")
             continue
         if choose == "15":
             print("1、投稿应用")
