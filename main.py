@@ -36,7 +36,7 @@ updateThings = '''1.2.2更新内容：
 #aptSource = "http://d.store.deepinos.org.cn"
 # 更换为国内源
 aptSource = [
-    #"https://mirrors.sdu.edu.cn/spark-store-repository/",
+    "https://mirrors.sdu.edu.cn/spark-store-repository/",
     "https://zunyun01.store.deepinos.org.cn/",
     "http://d.store.deepinos.org.cn/"
     ]
@@ -61,7 +61,7 @@ def DownloadFile(URL, path):
 
 
 # 从源下载安装包
-def InstallDeb(packageName):
+def InstallDeb(url):
     # root 的运行方案：
     # 1、使用 sudo（推荐）（默认）
     # 2、使用 pkexec（适用于在桌面环境使用）
@@ -70,7 +70,8 @@ def InstallDeb(packageName):
     # 2、使用 apt-get
     # 3、使用 apt-fast
     # 4、直接解压 deb 包到 / 并运行指定脚本（可以使一些软件包可以不用 root 权限安装）
-    os.system("{} {} install {}".format(rootRun[1], debInstall[1], packageName))
+    #os.system("{} {} install {}".format(rootRun[1], debInstall[1], packageName))
+    os.system(f"sudo bash '{programPath}/install.sh' '{aptSource}' '{url}'")
 
 # 从源重新下载安装包
 def ReinstallDeb(packageName):
@@ -176,7 +177,7 @@ def ShowProgramInfomation(jsonThings, url):
         # 应用操作
         installChoose = input("安装==>").lower().strip()
         if installChoose == "install":
-            InstallDeb(jsonThings['Pkgname'])
+            InstallDeb(f"{url}/../{jsonThings['Filename']}")
             input("按回车键继续……")
             break
         if installChoose == "reinstall":
@@ -300,6 +301,7 @@ favouriteList = json.loads(read_txt("{}/.config/spark-store-console/favourite.js
 ###################
 # 程序主事件
 ###################
+programPath = os.path.split(os.path.realpath(__file__))[0]  # 返回 string
 if True:
     if Find(sys.argv, "--help") > 0:  # 读取参数
         print("星火应用商店（终端版）帮助：")
